@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import DefaultData from "@/data/defaultOfflineData.json"
 
 export interface ExprotTypes {
   id: number;
@@ -38,7 +39,96 @@ interface SliceType {
   data: ActionType[];
 }
 
-const initialState: SliceType = { data: [] };
+const initialState: SliceType = { data:  [
+      {
+          "pk": 1,
+          "name": "تخلیه کامل",
+          "type": "empty",
+          "exports": [
+              {
+                  "id": 1,
+                  "name": "گزارش تخلیه",
+                  "shema": "empty_report"
+              }
+          ],
+          "uploads": [
+              {
+                  "id": 1,
+                  "name": "عکس تخلیه",
+                  "description": "عکس از وضعیت تخلیه",
+                  "required": false
+              }
+          ],
+          "works": [
+              {
+                  "id": 1,
+                  "name": "تخلیه زباله"
+              },
+              {
+                  "id": 2,
+                  "name": "تخلیه نخاله"
+              }
+          ],
+          "Field": [
+              {
+                  "id": 1,
+                  "name": "آدرس",
+                  "key": "address",
+                  "required": true
+              },
+              {
+                  "id": 2,
+                  "name": "توضیحات",
+                  "key": "description",
+                  "required": false
+              }
+          ]
+      },
+      {
+          "pk": 2,
+          "name": "بارگیری کامل",
+          "type": "full",
+          "exports": [
+              {
+                  "id": 2,
+                  "name": "گزارش بارگیری",
+                  "shema": "full_report"
+              }
+          ],
+          "uploads": [
+              {
+                  "id": 2,
+                  "name": "عکس بارگیری",
+                  "description": "عکس از وضعیت بارگیری",
+                  "required": false
+              }
+          ],
+          "works": [
+              {
+                  "id": 3,
+                  "name": "بارگیری زباله"
+              },
+              {
+                  "id": 4,
+                  "name": "بارگیری نخاله"
+              }
+          ],
+          "Field": [
+              {
+                  "id": 3,
+                  "name": "آدرس",
+                  "key": "address",
+                  "required": true
+              },
+              {
+                  "id": 4,
+                  "name": "نوع بار",
+                  "key": "load_type",
+                  "required": true
+              }
+          ]
+      }
+  ] };
 
 const Action = createSlice({
   name: "Action",

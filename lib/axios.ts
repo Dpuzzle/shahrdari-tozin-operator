@@ -1,6 +1,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
+import type { AxiosRequestConfig } from "axios";
 
 export const fetcher = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
@@ -56,5 +57,39 @@ fetcher.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+/**
+ * Helper function to determine if a request should be queued
+ * Activity-related requests (activity/ and reports/) should be queued when offline
+ */
+export function shouldQueueRequest(url: string): boolean {
+  return url.includes("activity/") || url.includes("reports/");
+}
+
+/**
+ * Helper to create a queuable request config
+ * This adds metadata that can be used by hooks to queue requests
+ */
+export function createQueuableRequest(
+  url: string,
+  method: "POST" | "PUT" | "DELETE",
+  data?: any
+): {
+  url: string;
+  method: "POST" | "PUT" | "DELETE";
+  payload: any;
+  type: "activity" | "report";
+} {
+  const type: "activity" | "report" = url.includes("reports/")
+    ? "report"
+    : "activity";
+
+  return {
+    url,
+    method,
+    payload: data,
+    type,
+  };
+}
 
 export default fetcher;

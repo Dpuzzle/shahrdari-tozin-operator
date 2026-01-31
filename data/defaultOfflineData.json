@@ -1,0 +1,247 @@
+{
+    "Action": {
+        "data": [
+            {
+                "pk": 1,
+                "name": "تخلیه کامل",
+                "type": "empty",
+                "exports": [
+                    {
+                        "id": 1,
+                        "name": "گزارش تخلیه",
+                        "shema": "empty_report"
+                    }
+                ],
+                "uploads": [
+                    {
+                        "id": 1,
+                        "name": "عکس تخلیه",
+                        "description": "عکس از وضعیت تخلیه",
+                        "required": false
+                    }
+                ],
+                "works": [
+                    {
+                        "id": 1,
+                        "name": "تخلیه زباله"
+                    },
+                    {
+                        "id": 2,
+                        "name": "تخلیه نخاله"
+                    }
+                ],
+                "Field": [
+                    {
+                        "id": 1,
+                        "name": "آدرس",
+                        "key": "address",
+                        "required": true
+                    },
+                    {
+                        "id": 2,
+                        "name": "توضیحات",
+                        "key": "description",
+                        "required": false
+                    }
+                ]
+            },
+            {
+                "pk": 2,
+                "name": "بارگیری کامل",
+                "type": "full",
+                "exports": [
+                    {
+                        "id": 2,
+                        "name": "گزارش بارگیری",
+                        "shema": "full_report"
+                    }
+                ],
+                "uploads": [
+                    {
+                        "id": 2,
+                        "name": "عکس بارگیری",
+                        "description": "عکس از وضعیت بارگیری",
+                        "required": false
+                    }
+                ],
+                "works": [
+                    {
+                        "id": 3,
+                        "name": "بارگیری زباله"
+                    },
+                    {
+                        "id": 4,
+                        "name": "بارگیری نخاله"
+                    }
+                ],
+                "Field": [
+                    {
+                        "id": 3,
+                        "name": "آدرس",
+                        "key": "address",
+                        "required": true
+                    },
+                    {
+                        "id": 4,
+                        "name": "نوع بار",
+                        "key": "load_type",
+                        "required": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Car": {
+        "data": [
+            {
+                "pk": 1,
+                "driver": {
+                    "id": 1,
+                    "name": "علی احمدی",
+                    "phone_number": "09123456789"
+                },
+                "license_plate": "12ج34567",
+                "license_plate_code": 12,
+                "type__name": "کامیون",
+                "last_empty_weight": 3500,
+                "contractor__name": "پیمانکار الف"
+            },
+            {
+                "pk": 2,
+                "driver": {
+                    "id": 2,
+                    "name": "محمد رضایی",
+                    "phone_number": "09187654321"
+                },
+                "license_plate": "23د45678",
+                "license_plate_code": 23,
+                "type__name": "کامیونت",
+                "last_empty_weight": 2800,
+                "contractor__name": "پیمانکار ب"
+            },
+            {
+                "pk": 3,
+                "driver": {
+                    "id": 3,
+                    "name": "حسن کریمی",
+                    "phone_number": "09151234567"
+                },
+                "license_plate": "34ص56789",
+                "license_plate_code": 34,
+                "type__name": "کامیون",
+                "last_empty_weight": 4200,
+                "contractor__name": "پیمانکار ج"
+            }
+        ]
+    },
+    "Activity": {
+        "data": [
+            {
+                "tozin_id": 1,
+                "Empty": 3500,
+                "Full": 8500,
+                "Car": {
+                    "pk": 1,
+                    "driver": {
+                        "id": 1,
+                        "name": "علی احمدی",
+                        "phone_number": "09123456789"
+                    },
+                    "license_plate": "12ج34567",
+                    "license_plate_code": 12,
+                    "type__name": "کامیون",
+                    "last_empty_weight": 3500,
+                    "contractor__name": "پیمانکار الف"
+                },
+                "Action": {
+                    "pk": 1,
+                    "name": "تخلیه کامل",
+                    "type": "empty",
+                    "exports": [],
+                    "uploads": [],
+                    "works": [
+                        {
+                            "id": 1,
+                            "name": "تخلیه زباله"
+                        }
+                    ],
+                    "Field": []
+                },
+                "baskol_number_empty": 12345,
+                "baskol_number_full": 12346,
+                "server_accepted": true,
+                "work_type": {
+                    "id": 1,
+                    "name": "تخلیه زباله"
+                },
+                "work_type_id": 1,
+                "address": "خیابان اصلی، کوچه اول",
+                "Field_Data": []
+            },
+            {
+                "tozin_id": 2,
+                "Empty": 2800,
+                "Full": 7200,
+                "Car": {
+                    "pk": 2,
+                    "driver": {
+                        "id": 2,
+                        "name": "محمد رضایی",
+                        "phone_number": "09187654321"
+                    },
+                    "license_plate": "23د45678",
+                    "license_plate_code": 23,
+                    "type__name": "کامیونت",
+                    "last_empty_weight": 2800,
+                    "contractor__name": "پیمانکار ب"
+                },
+                "Action": {
+                    "pk": 2,
+                    "name": "بارگیری کامل",
+                    "type": "full",
+                    "exports": [],
+                    "uploads": [],
+                    "works": [
+                        {
+                            "id": 3,
+                            "name": "بارگیری زباله"
+                        }
+                    ],
+                    "Field": []
+                },
+                "baskol_number_empty": 12347,
+                "baskol_number_full": 12348,
+                "server_accepted": true,
+                "work_type": {
+                    "id": 3,
+                    "name": "بارگیری زباله"
+                },
+                "work_type_id": 3,
+                "address": "خیابان فرعی، پلاک 10",
+                "Field_Data": []
+            }
+        ],
+        "last_tozin_id": 2
+    },
+    "requestQueue": {
+        "queue": [],
+        "isSyncing": false
+    },
+    "modals": {
+        "message": {
+            "type": "",
+            "title": "",
+            "desc": ""
+        }
+    },
+    "confirm": {
+        "open": false,
+        "options": {},
+        "id": null,
+        "resolvers": {}
+    },
+    "auth": {},
+    "temp": {
+        "selectedCar": null
+    }
+}

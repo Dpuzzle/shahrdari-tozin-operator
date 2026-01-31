@@ -14,16 +14,19 @@ import { useModals } from "@/hooks/useModal";
 import ReportModal from "@/components/Car/ReportModal";
 import usePlaque from "@/hooks/usePlaque";
 import { ModalStep } from "@/store/core/modals";
+import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
+import { useSyncQueue } from "@/hooks/common/useSyncQueue";
 
 export default function () {
-  const [online, setOnline] = useState(true);
+  const { isOnline } = useNetworkStatus();
+  const { syncQueue, queueLength, isSyncing } = useSyncQueue();
   const { Action_list, get_Action_list_list_712daa } = useAction();
   const _ = usePlaque();
   const {
     Activity_data,
     get_Activity_list_list_d2bfc9,
     sendDataServer: sendActivityData,
-  } = useActivity(online ? "normal" : "silent");
+  } = useActivity(isOnline ? "normal" : "silent");
   const { sendReport } = useCar("silent");
   const { openModal, isOpen } = useModals();
   const [messageModalOpen, setMessageModalOpen] = useState<
@@ -49,8 +52,12 @@ export default function () {
   };
 
   const handleStatusChange = (status: boolean) => {
-    // Here you can add logic to update the user's status in your backend
-    setOnline(status);
+    // StatusToggle now handles network status internally via useNetworkStatus hook
+    // This callback is kept for compatibility but the status is managed by the hook
+    if (status && queueLength > 0) {
+      // Trigger sync when coming back online
+      syncQueue();
+    }
   };
 
   const handleOpenModal = (type: "violation" | "vehicle") => {
@@ -88,7 +95,8 @@ export default function () {
       company_name: companyName,
       desc: desc,
     });
-    setSuccess(resp?.status === 201);
+    // Accept both 201 (success) and 202 (queued) as success
+    setSuccess(resp?.status === 201 || resp?.status === 202);
     setDriverName("");
     setDriverNumber("");
     setCarPlaque("");
@@ -107,12 +115,13 @@ export default function () {
   }, []);
 
   useEffect(() => {
-    if (online && !isOpen) {
+    if (isOnline && !isOpen) {
       sendActivityData();
     }
-  }, [Activity_data, online, isOpen]);
+  }, [Activity_data, isOnline, isOpen, sendActivityData]);
+console.log(Action_list);
 
-  const hasActions = Action_list.length > 0;
+  const hasActions = (Action_list||[]).length > 0;
   const hasActivities = Activity_data.length > 0;
 
   return (
@@ -148,6 +157,15 @@ export default function () {
               <div className="bg-gray-700 px-4 py-2 rounded-lg">
                 <StatusToggle onStatusChange={handleStatusChange} />
               </div>
+              {queueLength > 0 && (
+                <div className="bg-yellow-600 px-4 py-2 rounded-lg text-white text-sm flex items-center gap-2">
+                  <span>
+                    {isSyncing
+                      ? "در حال همگام‌سازی..."
+                      : `${queueLength} درخواست در صف`}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>

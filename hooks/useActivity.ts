@@ -7,14 +7,17 @@ import {
   type ActivityType,
 } from "@/store/slices/Activity";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetcher } from "@/lib/axios";
+import { fetcher, createQueuableRequest } from "@/lib/axios";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
+import { addRequest } from "@/store/slices/requestQueue";
 
 export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
   const { openConfirmModal } = useConfirm();
   const Activity_data = useAppSelector((store) => store.Activity).data;
   const dispatch = useAppDispatch();
+  const { isOnline } = useNetworkStatus();
 
   const get_activity_list = async (confirm: boolean = false) => {
     // check for confirm when this function is opened
@@ -23,6 +26,12 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
       if (!isConfirmed) {
         return false;
       }
+    }
+
+    // Don't fetch if offline (GET requests don't need queueing)
+    if (!isOnline) {
+      toast.error("در حالت آفلاین نمی‌توان اطلاعات را دریافت کرد");
+      return false;
     }
 
     try {
@@ -69,6 +78,16 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
 
     if (!data || data.length === 0) return;
 
+    // If offline, queue the request
+    if (!isOnline) {
+      const queueRequest = createQueuableRequest("activity/", "POST", data);
+      dispatch(addRequest(queueRequest));
+      toast.info("درخواست در صف قرار گرفت و پس از اتصال به اینترنت ارسال می‌شود");
+      return;
+    }
+
+    // If online, send immediately
+    try {
     const response = await fetcher.post("activity/", data);
 
     const serverData = response.data.Weighing;
@@ -79,6 +98,13 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
           serverData.map((a: any) => ({ ...a, server_accepted: true }))
         )
       );
+    } catch (error) {
+      // If request fails due to network error, queue it
+      console.error("Error sending activity data:", error);
+      const queueRequest = createQueuableRequest("activity/", "POST", data);
+      dispatch(addRequest(queueRequest));
+      toast.info("خطا در ارسال. درخواست در صف قرار گرفت");
+    }
   };
 
   useEffect(() => {
