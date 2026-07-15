@@ -113,24 +113,35 @@ function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export async function enqueue(payload: unknown): Promise<QueueItem> {
+export async function enqueue(payload: unknown) {
   const items = await ensureQueue();
-  const item: QueueItem = {
-    id: generateId(),
-    payload,
-    status: "pending",
-    attempts: 0,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  if (
-    items.filter(
-      (i) => (i?.payload as any).tozin_id === (payload as any).tozin_id,
-    ).length === 0
-  )
-    items.push(item);
+  const exiests_tozin_id = items.map((i) => (i.payload as any).tozin_id);
+
+  (payload as any).forEach(async (p: any) => {
+    let i = {
+      id: generateId(),
+      payload: p,
+      status: "pending" as any,
+      attempts: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (!exiests_tozin_id.includes(p.tozin_id)) {
+      items.push(i);
+      await appendToDailyCsv(p);
+    }
+  });
+
   await writeQueue(items);
-  return item;
+  // return item;
+}
+
+const MAX_RETRIES = 1;
+const BASE_DELAY_MS = 1000;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const DJANGO_URL = `${process.env.NEXT_PUBLIC_SERVER_URL}activity/`;
@@ -145,20 +156,19 @@ export async function flushQueue(
   authorization?: string | null,
 ): Promise<FlushResult> {
   const items = await ensureQueue();
-  const pending = items.filter((i) => i.status === "pending");
 
   let sent = 0;
   let failed = 0;
   const combinedWeighing: any[] = [];
 
-  for (const item of pending) {
+  for (const item of items) {
     try {
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
       };
       if (authorization) headers["Authorization"] = authorization;
 
-      const res = await axios.post(DJANGO_URL, item.payload, {
+      const res = await axios.post(DJANGO_URL, [item.payload], {
         headers,
         validateStatus: () => true,
       });
@@ -169,23 +179,33 @@ export async function flushQueue(
       if (res.status >= 200 && res.status < 300) {
         item.status = "sent";
         sent += 1;
-        await appendToDailyCsv(item.payload);
         if (Array.isArray(res.data?.Weighing)) {
           combinedWeighing.push(...res.data.Weighing);
         } else if (res.data) {
           combinedWeighing.push(res.data);
         }
-      } else {
+      } else if (item.attempts >= MAX_RETRIES) {
         item.status = "failed";
         item.lastError = `status ${res.status}: ${JSON.stringify(res.data)}`;
         failed += 1;
+      } else {
+        item.status = "pending";
+        const delay = BASE_DELAY_MS * Math.pow(2, item.attempts - 1);
+        await sleep(delay);
       }
     } catch (err: any) {
-      item.status = "failed";
       item.attempts += 1;
-      item.lastError = err?.message ?? String(err);
       item.updatedAt = new Date().toISOString();
-      failed += 1;
+
+      if (item.attempts >= MAX_RETRIES) {
+        item.status = "failed";
+        item.lastError = err?.message ?? String(err);
+        failed += 1;
+      } else {
+        item.status = "pending";
+        const delay = BASE_DELAY_MS * Math.pow(2, item.attempts - 1);
+        await sleep(delay);
+      }
     }
   }
 
