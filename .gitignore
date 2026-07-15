@@ -1,7 +1,5 @@
-# Logs
-logs
-*.log
-npm-debug.log*
+# Next.js server-side request cache (activity queue)
+.queue/
 
 # Runtime data
 pids

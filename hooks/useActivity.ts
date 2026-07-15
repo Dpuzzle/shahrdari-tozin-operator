@@ -7,11 +7,10 @@ import {
   type ActivityType,
 } from "@/store/slices/Activity";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetcher, createQueuableRequest } from "@/lib/axios";
+import { apiFetcher } from "@/lib/axios";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
-import { addRequest } from "@/store/slices/requestQueue";
 
 export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
   const { openConfirmModal } = useConfirm();
@@ -35,7 +34,7 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
     }
 
     try {
-      const response = await fetcher.get("activity/");
+      const response = await apiFetcher.get("/api/activity");
 
       if (response.status >= 200 && response.status < 300) {
         const serverData = response.data.Weighing;
@@ -44,8 +43,8 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
         // set response of server on state
         dispatch(
           Activity_set(
-            serverData.map((a: any) => ({ ...a, server_accepted: true }))
-          )
+            serverData.map((a: any) => ({ ...a, server_accepted: true })),
+          ),
         );
         dispatch(Activity_set_base(lastBase));
         return true;
@@ -78,32 +77,22 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
 
     if (!data || data.length === 0) return;
 
-    // If offline, queue the request
-    if (!isOnline) {
-      const queueRequest = createQueuableRequest("activity/", "POST", data);
-      dispatch(addRequest(queueRequest));
-      toast.info("درخواست در صف قرار گرفت و پس از اتصال به اینترنت ارسال می‌شود");
-      return;
-    }
-
-    // If online, send immediately
     try {
-    const response = await fetcher.post("activity/", data);
+      const response = await apiFetcher.post("/api/activity", data);
 
-    const serverData = response.data.Weighing;
-
-    if (serverData)
-      dispatch(
-        Activity_set(
-          serverData.map((a: any) => ({ ...a, server_accepted: true }))
-        )
-      );
+      const serverData = response.data?.Weighing;
+      if (serverData) {
+        dispatch(
+          Activity_set(
+            serverData.map((a: any) => ({ ...a, server_accepted: true })),
+          ),
+        );
+      } else {
+        toast.success("اطلاعات با موفقیت ارسال شد");
+      }
     } catch (error) {
-      // If request fails due to network error, queue it
       console.error("Error sending activity data:", error);
-      const queueRequest = createQueuableRequest("activity/", "POST", data);
-      dispatch(addRequest(queueRequest));
-      toast.info("خطا در ارسال. درخواست در صف قرار گرفت");
+      toast.error("خطا در ارسال اطلاعات");
     }
   };
 

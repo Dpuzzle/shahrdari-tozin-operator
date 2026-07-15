@@ -22,6 +22,23 @@ export const midFetcher = axios.create({
     return status < 500;
   },
 });
+export const apiFetcher = axios.create({
+  baseURL: "",
+  validateStatus(status) {
+    return status < 500;
+  },
+});
+
+apiFetcher.interceptors.request.use(
+  (config) => {
+    const token = Cookies.get("accessToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 fetcher.interceptors.request.use(
   (config) => {
