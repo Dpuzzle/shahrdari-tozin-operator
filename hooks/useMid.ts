@@ -18,9 +18,9 @@ export const useMid = () => {
     setBaskolData(response.data);
   };
 
-  useEffect(() => {
-    fetchMidData();
-  }, []);
+  // useEffect(() => {
+  //   fetchMidData();
+  // }, []);
 
   return { fetchMidData, baskolData };
 };

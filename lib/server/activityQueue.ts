@@ -145,7 +145,7 @@ export async function flushQueue(
   authorization?: string | null,
 ): Promise<FlushResult> {
   const items = await ensureQueue();
-  const pending = items.filter((i) => i.status !== "sent");
+  const pending = items.filter((i) => i.status === "pending");
 
   let sent = 0;
   let failed = 0;
@@ -190,7 +190,6 @@ export async function flushQueue(
   }
 
   const remaining = items.filter((i) => i.status !== "sent");
-  console.log(remaining);
 
   await writeQueue(remaining);
 

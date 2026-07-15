@@ -38,7 +38,7 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
 
       if (response.status >= 200 && response.status < 300) {
         const serverData = response.data.Weighing;
-        const lastBase: number = response.data.last_tozin_id ?? 0;
+        // const lastBase: number = response.data.last_tozin_id ?? 0;
 
         // set response of server on state
         dispatch(
@@ -46,7 +46,7 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
             serverData.map((a: any) => ({ ...a, server_accepted: true })),
           ),
         );
-        dispatch(Activity_set_base(lastBase));
+        // dispatch(Activity_set_base(lastBase));
         return true;
       }
 
@@ -76,6 +76,8 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
     }));
 
     if (!data || data.length === 0) return;
+    const last_tozin_id = Math.max(...data.map((a) => a.tozin_id || 0));
+    dispatch(Activity_set_base(last_tozin_id));
 
     try {
       const response = await apiFetcher.post("/api/activity", data);
