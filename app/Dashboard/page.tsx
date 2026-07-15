@@ -113,7 +113,6 @@ export default function () {
       sendActivityData();
     }
   }, [isOnline, isOpen]);
-  console.log(Action_list);
 
   const hasActions = (Action_list || []).length > 0;
   const hasActivities = Activity_data.length > 0;

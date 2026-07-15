@@ -80,18 +80,11 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
     dispatch(Activity_set_base(last_tozin_id));
 
     try {
-      const response = await apiFetcher.post("/api/activity", data);
+      await apiFetcher.post("/api/activity", data);
 
-      const serverData = response.data?.Weighing;
-      if (serverData) {
-        dispatch(
-          Activity_set(
-            serverData.map((a: any) => ({ ...a, server_accepted: true })),
-          ),
-        );
-      } else {
-        toast.success("اطلاعات با موفقیت ارسال شد");
-      }
+      dispatch(
+        Activity_set(data.map((a: any) => ({ ...a, server_accepted: true }))),
+      );
     } catch (error) {
       console.error("Error sending activity data:", error);
       toast.error("خطا در ارسال اطلاعات");
