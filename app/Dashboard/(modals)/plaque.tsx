@@ -114,15 +114,11 @@ export default function Plaque() {
   const { goNext, actionType, updateCurrentData, selectedActivity } =
     useModals();
 
-  console.log("cars", cars);
-
   const works = actionType?.works || [];
 
   const [selectedCar, selectedCarHandler] = useState<CarType | undefined>(
     undefined,
   );
-
-  console.log("filteredData", filteredData);
 
   const filterPlaques = (searchTerm: string) => {
     if (!searchTerm) return;
@@ -133,8 +129,10 @@ export default function Plaque() {
   };
 
   useEffect(() => {
-    if (baskolData && baskolData.plaque_number)
+    if (baskolData && baskolData.plaque_number){
       handlePlaqueChange(baskolData.plaque_number);
+      setShowDropdown(true)
+    }
   }, [baskolData]);
 
   useEffect(() => {
