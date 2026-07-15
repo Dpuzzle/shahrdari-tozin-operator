@@ -24,8 +24,7 @@ const CSV_COLUMNS = [
 
 function csvEscape(value: unknown): string {
   if (value === null || value === undefined) return "";
-  const str =
-    typeof value === "object" ? JSON.stringify(value) : String(value);
+  const str = typeof value === "object" ? JSON.stringify(value) : String(value);
   return `"${str.replace(/"/g, '""')}"`;
 }
 
@@ -124,7 +123,12 @@ export async function enqueue(payload: unknown): Promise<QueueItem> {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  items.push(item);
+  if (
+    items.filter(
+      (i) => (i?.payload as any).tozin_id === (payload as any).tozin_id,
+    ).length === 0
+  )
+    items.push(item);
   await writeQueue(items);
   return item;
 }
@@ -138,10 +142,10 @@ export interface FlushResult {
 }
 
 export async function flushQueue(
-  authorization?: string | null
+  authorization?: string | null,
 ): Promise<FlushResult> {
   const items = await ensureQueue();
-  const pending = items.filter((i) => i.status === "pending");
+  const pending = items.filter((i) => i.status !== "sent");
 
   let sent = 0;
   let failed = 0;
@@ -186,11 +190,15 @@ export async function flushQueue(
   }
 
   const remaining = items.filter((i) => i.status !== "sent");
+  console.log(remaining);
+
   await writeQueue(remaining);
 
   return {
     sent,
     failed,
-    response: combinedWeighing.length ? { Weighing: combinedWeighing } : undefined,
+    response: combinedWeighing.length
+      ? { Weighing: combinedWeighing }
+      : undefined,
   };
 }

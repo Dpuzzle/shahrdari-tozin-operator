@@ -8,9 +8,9 @@ import { useNetworkStatus } from "./common/useNetworkStatus";
 
 export function useAction() {
   const { openConfirmModal } = useConfirm();
-  const {isOnline} = useNetworkStatus()
+  const { isOnline } = useNetworkStatus();
   const Action_list = useAppSelector((store) => store.Action).data;
-  
+
   const dispatch = useAppDispatch();
   const get_Action_list_list_712daa = async (confirm: boolean = false) => {
     // check for confirm when this function is opened
@@ -21,14 +21,11 @@ export function useAction() {
       }
     }
 
-    
-    
     try {
       // get data and read from server
       const response = await fetcher.get("Action/712daa/");
 
       if (response.data.Action) {
-        
         const serverData = response.data.Action;
         // set response of server on state
 
@@ -47,8 +44,8 @@ export function useAction() {
 
   useEffect(() => {
     // Fetch data when hook is initialized
-    if(isOnline)
-    get_Action_list_list_712daa();
+    // if(isOnline)
+    // get_Action_list_list_712daa();
   }, []);
 
   return { Action_list, get_Action_list_list_712daa };
