@@ -43,7 +43,7 @@ function PlaqueOTPInput({
             return newOtp[index];
           }
           return "";
-        })
+        }),
     );
   }, [value]);
 
@@ -69,7 +69,7 @@ function PlaqueOTPInput({
 
   const handleKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
@@ -114,10 +114,12 @@ export default function Plaque() {
   const { goNext, actionType, updateCurrentData, selectedActivity } =
     useModals();
 
+  console.log("cars", cars);
+
   const works = actionType?.works || [];
 
   const [selectedCar, selectedCarHandler] = useState<CarType | undefined>(
-    undefined
+    undefined,
   );
 
   console.log("filteredData", filteredData);
@@ -125,7 +127,7 @@ export default function Plaque() {
   const filterPlaques = (searchTerm: string) => {
     if (!searchTerm) return;
     const filterCars = cars.filter((car) =>
-      car.license_plate.toLowerCase().includes(searchTerm.toLowerCase())
+      car.license_plate.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredData(filterCars);
   };
@@ -349,7 +351,7 @@ export default function Plaque() {
                             onClick={() => {
                               handlePlaqueSelect(
                                 item.license_plate,
-                                String(item.license_plate_code)
+                                String(item.license_plate_code),
                               );
                               handleSubmit(item);
                             }}

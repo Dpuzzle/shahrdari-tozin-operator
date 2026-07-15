@@ -11,7 +11,7 @@ export interface NetworkStatus {
 export function useNetworkStatus() {
   const [actualNetworkStatus, setActualNetworkStatus] = useState<boolean>(
     // typeof window !== "undefined" ? navigator.onLine : true
-    false
+    true,
   );
   const [manualOverride, setManualOverride] = useState<boolean | null>(null);
 
@@ -62,4 +62,3 @@ export function useNetworkStatus() {
     toggleManualOverride,
   };
 }
-
