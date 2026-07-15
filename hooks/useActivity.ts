@@ -6,11 +6,69 @@ import {
   Activity_set_base,
   type ActivityType,
 } from "@/store/slices/Activity";
+import { type CarType } from "@/store/slices/Car";
+import { type ActionType } from "@/store/slices/Action";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { apiFetcher } from "@/lib/axios";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
+
+interface CsvActivityRow {
+  tozin_id?: string;
+  id?: string;
+  vehicle_id?: string;
+  vehicle_plate?: string;
+  vehicle_driver?: string;
+  weighing_type_id?: string;
+  weighing_type_name?: string;
+  work_type_id?: string;
+  Empty?: string;
+  Full?: string;
+  address?: string;
+  Field_Data?: string;
+  sent_at?: string;
+}
+
+function mapCsvRowToActivity(row: CsvActivityRow): ActivityType {
+  const vehicleId = Number(row.vehicle_id) || 0;
+  const weighingTypeId = Number(row.weighing_type_id) || 0;
+  const workTypeId = Number(row.work_type_id) || 0;
+  const empty = row.Empty ? Number(row.Empty) : null;
+  const full = row.Full ? Number(row.Full) : null;
+
+  const car: CarType = {
+    pk: vehicleId,
+    driver: { id: 0, name: row.vehicle_driver ?? "", phone_number: "" },
+    license_plate: row.vehicle_plate ?? "",
+    license_plate_code: 0,
+    type__name: "",
+    last_empty_weight: 0,
+    contractor__name: "",
+  };
+
+  const action: ActionType = {
+    pk: weighingTypeId,
+    name: row.weighing_type_name ?? "",
+    type: "empty",
+    exports: [],
+    uploads: [],
+    works: [],
+    Field: [],
+  };
+
+  return {
+    tozin_id: Number(row.tozin_id) || 0,
+    Empty: empty,
+    Full: full,
+    Car: car,
+    Action: action,
+    work_type_id: workTypeId,
+    work_type: { id: workTypeId, name: "" },
+    address: row.address ?? "",
+    server_accepted: true,
+  };
+}
 
 export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
   const { openConfirmModal } = useConfirm();
@@ -27,26 +85,18 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
       }
     }
 
-    // Don't fetch if offline (GET requests don't need queueing)
-    if (!isOnline) {
-      toast.error("در حالت آفلاین نمی‌توان اطلاعات را دریافت کرد");
-      return false;
-    }
-
+    // Data is read from the local CSV log (no server fetch needed),
+    // so it works online and offline.
     try {
-      const response = await apiFetcher.get("/api/activity");
+      const response = await apiFetcher.get("/api/activity/logs");
 
       if (response.status >= 200 && response.status < 300) {
-        const serverData = response.data.Weighing;
-        // const lastBase: number = response.data.last_tozin_id ?? 0;
+        const csvData: CsvActivityRow[] = response.data.data ?? [];
 
-        // set response of server on state
+        // set CSV rows on state (no server fetch needed)
         dispatch(
-          Activity_set(
-            serverData.map((a: any) => ({ ...a, server_accepted: true })),
-          ),
+          Activity_set(csvData.map((row) => mapCsvRowToActivity(row))),
         );
-        // dispatch(Activity_set_base(lastBase));
         return true;
       }
 

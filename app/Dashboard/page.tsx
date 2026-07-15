@@ -24,7 +24,7 @@ export default function () {
     Activity_data,
     get_Activity_list_list_d2bfc9,
     sendDataServer: sendActivityData,
-  } = useActivity(isOnline ? "normal" : "silent");
+  } = useActivity("normal");
   const { sendReport } = useCar("silent");
   const { openModal, isOpen } = useModals();
   const [messageModalOpen, setMessageModalOpen] = useState<
@@ -104,7 +104,7 @@ export default function () {
     // Fetch actions data from Django when component mounts
     get_Action_list_list_712daa();
 
-    // Fetch activity data from Django when component mounts
+    // Load activity data from the local CSV log
     get_Activity_list_list_d2bfc9();
   }, []);
 
