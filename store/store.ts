@@ -9,23 +9,30 @@ import ActionReducer from "@/store/slices/Action";
 import ActivityReducer from "@/store/slices/Activity";
 import CarReducer from "@/store/slices/Car";
 import tempReducer from "@/store/slices/temp";
-import requestQueueReducer from "@/store/slices/requestQueue";
 
 const rootReducer = combineReducers({
-    modals,
-    confirm,
-    auth,
-    Action: ActionReducer,
-    Activity: ActivityReducer,
-    Car: CarReducer,
-    temp: tempReducer,
-  requestQueue: requestQueueReducer,
+  modals,
+  confirm,
+  auth,
+  Action: ActionReducer,
+  Activity: ActivityReducer,
+  Car: CarReducer,
+  temp: tempReducer,
 });
 
 const persistConfig: PersistConfig<ReturnType<typeof rootReducer>> = {
   key: "root",
   storage,
-  whitelist: ["modals", "confirm", "auth", "Action", "Activity", "Car", "temp", "requestQueue"],
+  whitelist: [
+    "modals",
+    "confirm",
+    "auth",
+    "Action",
+    "Activity",
+    "Car",
+    "temp",
+    "requestQueue",
+  ],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

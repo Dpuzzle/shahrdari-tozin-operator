@@ -15,11 +15,9 @@ import ReportModal from "@/components/Car/ReportModal";
 import usePlaque from "@/hooks/usePlaque";
 import { ModalStep } from "@/store/core/modals";
 import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
-import { useSyncQueue } from "@/hooks/common/useSyncQueue";
 
 export default function () {
   const { isOnline } = useNetworkStatus();
-  const { syncQueue, queueLength, isSyncing } = useSyncQueue();
   const { Action_list, get_Action_list_list_712daa } = useAction();
   const _ = usePlaque();
   const {
@@ -54,10 +52,6 @@ export default function () {
   const handleStatusChange = (status: boolean) => {
     // StatusToggle now handles network status internally via useNetworkStatus hook
     // This callback is kept for compatibility but the status is managed by the hook
-    if (status && queueLength > 0) {
-      // Trigger sync when coming back online
-      syncQueue();
-    }
   };
 
   const handleOpenModal = (type: "violation" | "vehicle") => {
@@ -119,9 +113,9 @@ export default function () {
       sendActivityData();
     }
   }, [Activity_data, isOnline, isOpen, sendActivityData]);
-console.log(Action_list);
+  console.log(Action_list);
 
-  const hasActions = (Action_list||[]).length > 0;
+  const hasActions = (Action_list || []).length > 0;
   const hasActivities = Activity_data.length > 0;
 
   return (
@@ -157,15 +151,6 @@ console.log(Action_list);
               <div className="bg-gray-700 px-4 py-2 rounded-lg">
                 <StatusToggle onStatusChange={handleStatusChange} />
               </div>
-              {queueLength > 0 && (
-                <div className="bg-yellow-600 px-4 py-2 rounded-lg text-white text-sm flex items-center gap-2">
-                  <span>
-                    {isSyncing
-                      ? "در حال همگام‌سازی..."
-                      : `${queueLength} درخواست در صف`}
-                  </span>
-                </div>
-              )}
             </div>
           </div>
         </div>
