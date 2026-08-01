@@ -69,7 +69,7 @@ export function parseCsv(content: string): Record<string, string>[] {
         record[key] = r[idx] ?? "";
       });
       return record;
-    });
+    }).reverse();
 }
 
 export async function readDailyCsv(

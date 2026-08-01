@@ -106,13 +106,25 @@ export default function Plaque() {
   const { cars } = usePlaque();
   const [selectedPlaque, setSelectedPlaque] = useState("");
   const [filteredData, setFilteredData] = useState<CarType[]>([]);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(true);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isWorkSelectionOpen, setIsWorkSelectionOpen] = useState(false);
-  const { baskolData } = useMid();
+  const { baskolData, fetchMidData } = useMid();
+
+	useEffect(() => {
+if(!selectedPlaque)		
+		fetchMidData()
+	})
 
   const { goNext, actionType, updateCurrentData, selectedActivity } =
     useModals();
+	
+	useEffect(() => {
+		if(!selectedPlaque)	return
+		setShowDropdown(true)
+		if(selectedPlaque.length ===8)
+		filterPlaques(selectedPlaque.slice(0, -2))
+	}, [selectedPlaque])
 
   const works = actionType?.works || [];
 
