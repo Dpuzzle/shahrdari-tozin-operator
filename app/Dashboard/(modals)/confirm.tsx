@@ -89,7 +89,8 @@ export default function Confirm() {
     empty: empltyWeghting || "وزن نشده",
     car_plaque: selectedCar?.license_plate,
     car_type: selectedCar?.type__name,
-    driver_name: selectedCar?.driver.name,
+    driver_name: selectedCar?.driver?.name,
+    mabda: selectedCar?.mabda?.find((m) => m.pk === modalData?.mabda)?.name || "-",
     // baskol_number_empty: modal?.activity?.baskol_number_empty,
     empty_date: new Date().toLocaleString("fa"),
     full_date: new Date().toLocaleString("fa"),
@@ -176,6 +177,14 @@ export default function Confirm() {
                     {selectedCar.type__name}
                   </p>
                 </div>
+                {modalData?.mabda && (
+                  <div className="bg-white p-3 rounded-md">
+                    <p className="text-sm text-gray-500">مبدا</p>
+                    <p className="font-medium text-lg">
+                      {selectedCar.mabda?.find((m) => m.pk === modalData.mabda)?.name || "-"}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -31,6 +31,7 @@ export interface ModalDataProps {
   fullWeghting?: number;
   empltyWeghting?: number;
   Field_Data?: FieldDataWighing[] | [];
+  mabda?: number;
 }
 
 export type coreType = {

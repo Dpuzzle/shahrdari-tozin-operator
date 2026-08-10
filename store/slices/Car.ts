@@ -1,5 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
+export interface MabdaType {
+  pk: number;
+  name: string;
+}
+
 export interface DriverType {
   id: number;
   name: string;
@@ -14,6 +19,7 @@ export interface CarType {
   type__name: string;
   last_empty_weight: number;
   contractor__name:string
+  mabda: MabdaType[];
 }
 
 interface SliceType {

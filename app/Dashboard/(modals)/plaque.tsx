@@ -132,6 +132,10 @@ if(!selectedPlaque)
     undefined,
   );
 
+  const [selectedMabda, setSelectedMabda] = useState<CarType["mabda"][0] | undefined>(
+    undefined,
+  );
+
   const filterPlaques = (searchTerm: string) => {
     if (!searchTerm) return;
     const filterCars = cars.filter((car) =>
@@ -171,10 +175,17 @@ if(!selectedPlaque)
 
   const handleSubmit = (car: CarType) => {
     selectedCarHandler(car);
-    updateCurrentData({ car });
+    setSelectedMabda(undefined);
+    updateCurrentData({ car, mabda: undefined });
   };
 
   const handleNextStep = () => {
+    if (!selectedMabda && selectedCar && selectedCar.mabda.length > 0) {
+      return;
+    }
+    if (selectedMabda) {
+      updateCurrentData({ mabda: selectedMabda.pk });
+    }
     if (works.length > 0) {
       setIsWorkSelectionOpen(true);
     } else {
@@ -245,6 +256,32 @@ if(!selectedPlaque)
                       </p>
                     </div>
                   </div>
+
+                  {selectedCar.mabda && selectedCar.mabda.length > 0 && (
+                    <div className="border-t border-gray-200 pt-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        مبدا
+                      </label>
+                      <select
+                        value={selectedMabda?.pk || ""}
+                        onChange={(e) => {
+                          const pk = Number(e.target.value);
+                          const mabda = selectedCar.mabda.find((m) => m.pk === pk);
+                          setSelectedMabda(mabda);
+                          updateCurrentData({ mabda: pk });
+                        }}
+                        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">انتخاب مبدا</option>
+                        {selectedCar.mabda.map((m) => (
+                          <option key={m.pk} value={m.pk}>
+                            {m.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   <div className="pt-4 border-t border-gray-200">
                     <div className="flex gap-3">
                       <Button

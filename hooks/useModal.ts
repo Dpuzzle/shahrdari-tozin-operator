@@ -74,6 +74,7 @@ export const useModals = () => {
       work_type: selectedWork as any,
       work_type_id: selectedWork?.id || -1,
       Action: actionType as any,
+      mabda: modalData?.mabda || null,
     };
 
     console.log("setActivityData", activityData);
@@ -122,6 +123,7 @@ export const useModals = () => {
 
     perviousData.car = activity.Car;
     perviousData.selectedWork = activity.work_type;
+    perviousData.mabda = activity.mabda;
 
     perviousData.fullWeghting = activity.Full || undefined;
     perviousData.empltyWeghting = activity.Empty || undefined;

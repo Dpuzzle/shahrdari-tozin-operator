@@ -16,6 +16,7 @@ export interface ActivityType {
   work_type_id: number;
   address?: string;
   Field_Data?: FieldDataWighing[];
+  mabda?: number;
 }
 
 interface SliceType {
