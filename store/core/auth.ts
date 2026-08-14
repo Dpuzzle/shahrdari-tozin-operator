@@ -1,8 +1,16 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
+export interface UserInfo {
+  id: number;
+  username: string;
+  previous_weight_permission: boolean;
+  add_car_permission: boolean;
+}
+
 export interface UserType {
-  access: string;
-  refresh: string;
+  access?: string;
+  refresh?: string;
+  user?: UserInfo;
 }
 
 export type authType = {

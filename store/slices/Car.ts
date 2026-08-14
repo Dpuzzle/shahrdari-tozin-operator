@@ -15,11 +15,20 @@ export interface CarType {
   pk: number;
   driver: DriverType;
   license_plate: string;
-  license_plate_code:number
+  license_plate_code: number;
+  license_plate_2?: number;
+  license_plate_3?: number;
+  license_plate_alfabet?: string;
+  license_plate_country?: string;
+  description?: string;
   type__name: string;
   last_empty_weight: number;
-  contractor__name:string
+  contractor?: { pk: number; name: string };
+  contractor__name: string;
+  is_active?: boolean;
+  shift?: number;
   mabda: MabdaType[];
+  from_operator?: boolean;
 }
 
 interface SliceType {

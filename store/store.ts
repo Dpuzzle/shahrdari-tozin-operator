@@ -9,6 +9,7 @@ import ActionReducer from "@/store/slices/Action";
 import ActivityReducer from "@/store/slices/Activity";
 import CarReducer from "@/store/slices/Car";
 import tempReducer from "@/store/slices/temp";
+import requestQueueReducer from "@/store/slices/requestQueue";
 
 const rootReducer = combineReducers({
   modals,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   Activity: ActivityReducer,
   Car: CarReducer,
   temp: tempReducer,
+  requestQueue: requestQueueReducer,
 });
 
 const persistConfig: PersistConfig<ReturnType<typeof rootReducer>> = {

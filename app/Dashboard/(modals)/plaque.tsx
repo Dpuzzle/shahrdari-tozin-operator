@@ -17,6 +17,8 @@ import Image from "next/image";
 import { useModals } from "@/hooks/useModal";
 import { ModalStep } from "@/store/core/modals";
 import { useMid } from "@/hooks/useMid";
+import { useAuth } from "@/hooks/common/useAuth";
+import toast from "react-hot-toast";
 
 export interface ActionWorkType {
   id: number;
@@ -103,12 +105,18 @@ function PlaqueOTPInput({
 }
 
 export default function Plaque() {
-  const { cars } = usePlaque();
+  const { cars, createCar } = usePlaque();
+  const { user_data } = useAuth();
   const [selectedPlaque, setSelectedPlaque] = useState("");
   const [filteredData, setFilteredData] = useState<CarType[]>([]);
   const [showDropdown, setShowDropdown] = useState(true);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isWorkSelectionOpen, setIsWorkSelectionOpen] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [newDriverName, setNewDriverName] = useState("");
+  const [newVehicleType, setNewVehicleType] = useState("");
+  const [newCompanyName, setNewCompanyName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { baskolData, fetchMidData } = useMid();
 
 	useEffect(() => {
@@ -199,6 +207,28 @@ if(!selectedPlaque)
     updateCurrentData({ selectedWork: work });
 
     goNext(ModalStep.PLAQUE);
+  };
+
+  const handleCreateCar = async () => {
+    if (!selectedPlaque || !newDriverName.trim() || !newVehicleType.trim()) {
+      toast.error("پلاک، نام راننده و نوع خودرو الزامی است");
+      return;
+    }
+    setIsSubmitting(true);
+    const created = await createCar({
+      license_plate: selectedPlaque,
+      driver_name: newDriverName.trim(),
+      vehicle_type_name: newVehicleType.trim(),
+      company_name: newCompanyName.trim() || undefined,
+    });
+    setIsSubmitting(false);
+    if (created) {
+      handleSubmit(created);
+      setShowCreateForm(false);
+      setNewDriverName("");
+      setNewVehicleType("");
+      setNewCompanyName("");
+    }
   };
 
   return (
@@ -435,6 +465,88 @@ if(!selectedPlaque)
               </div>
             </div>
           </div>
+
+          {/* New Car Creation Section */}
+          {user_data?.user?.add_car_permission && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+              <div className="px-4 py-3 bg-gray-50 border-b">
+                <h2 className="text-sm font-semibold text-gray-900">ثبت خودروی جدید</h2>
+              </div>
+              <div className="p-6 space-y-4">
+                {!showCreateForm ? (
+                  <Button
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => setShowCreateForm(true)}
+                  >
+                    ثبت خودروی جدید
+                  </Button>
+                ) : (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">شماره پلاک</label>
+                      <input
+                        type="text"
+                        value={selectedPlaque}
+                        onChange={(e) => handlePlaqueChange(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="مثال: 12ع345"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">نام راننده</label>
+                      <input
+                        type="text"
+                        value={newDriverName}
+                        onChange={(e) => setNewDriverName(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="نام راننده"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">نوع خودرو</label>
+                      <input
+                        type="text"
+                        value={newVehicleType}
+                        onChange={(e) => setNewVehicleType(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="نوع خودرو"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">نام شرکت (اختیاری)</label>
+                      <input
+                        type="text"
+                        value={newCompanyName}
+                        onChange={(e) => setNewCompanyName(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="نام شرکت"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        onClick={handleCreateCar}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "در حال ثبت..." : "ثبت خودرو"}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setShowCreateForm(false);
+                          setNewDriverName("");
+                          setNewVehicleType("");
+                          setNewCompanyName("");
+                        }}
+                      >
+                        انصراف
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

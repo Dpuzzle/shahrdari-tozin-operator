@@ -19,7 +19,7 @@ import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
 export default function () {
   const { isOnline } = useNetworkStatus();
   const { Action_list, get_Action_list_list_712daa } = useAction();
-  const _ = usePlaque();
+  const { flushPendingCars } = usePlaque();
   const {
     Activity_data,
     get_Activity_list_list_d2bfc9,
@@ -111,6 +111,7 @@ export default function () {
   useEffect(() => {
     if (isOnline && !isOpen) {
       sendActivityData();
+      flushPendingCars();
     }
   }, [isOnline, isOpen]);
 

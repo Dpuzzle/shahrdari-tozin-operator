@@ -5,12 +5,14 @@ import { cn } from "@/lib/utils";
 import { ModalStep } from "@/store/core/modals";
 import { useModals } from "@/hooks/useModal";
 import { useMid } from "@/hooks/useMid";
+import { useAuth } from "@/hooks/common/useAuth";
 
 export default function WeightSection() {
   const [isCalculating, setIsCalculating] = useState(true);
   const { goNext, goPervious, selectedCar, step } = useModals();
   const [calculatedWeight, setCalculatedWeight] = useState<number | null>(null);
   const { baskolData, fetchMidData } = useMid();
+  const { user_data } = useAuth();
   //(step === ModalStep.WEIGHTING_EMPTY);
 
   const isEmptyWeightCalc = step === ModalStep.WEIGHTING_EMPTY;
@@ -144,7 +146,7 @@ export default function WeightSection() {
         {/* Action Buttons */}
         <div className="p-6 w-full flex flex-row justify-between">
           <div className="flex flex-row gap-3">
-            {isEmptyWeightCalc && selectedCar.last_empty_weight && (
+            {isEmptyWeightCalc && selectedCar.last_empty_weight && user_data?.user?.previous_weight_permission !== false && (
               <Button
                 type="button"
                 onClick={() => {

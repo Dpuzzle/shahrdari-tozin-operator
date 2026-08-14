@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logoutUser, setUser } from "@/store/core/auth";
@@ -62,6 +62,8 @@ export function useAuth() {
       localStorage.setItem("refreshToken", refresh);
       localStorage.setItem("user", JSON.stringify(user));
 
+      dispatch(setUser({ access, refresh, user }));
+
       //("Login successful, redirecting to Dashboard...");
 
       // // Force page reload to trigger middleware for redirection
@@ -73,6 +75,22 @@ export function useAuth() {
       loadingHandler(false);
     }
   };
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        dispatch(setUser({
+          access: localStorage.getItem("accessToken") || undefined,
+          refresh: localStorage.getItem("refreshToken") || undefined,
+          user: parsedUser,
+        }));
+      } catch (e) {
+        // ignore parse errors
+      }
+    }
+  }, [dispatch]);
 
   const logout = async () => {
     dispatch(logoutUser());
