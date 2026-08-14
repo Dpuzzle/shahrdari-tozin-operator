@@ -114,25 +114,24 @@ export default function Plaque() {
   const [isWorkSelectionOpen, setIsWorkSelectionOpen] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newDriverName, setNewDriverName] = useState("");
+  const [PhoneNo, setPhoneNo] = useState(0);
   const [newVehicleType, setNewVehicleType] = useState("");
   const [newCompanyName, setNewCompanyName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { baskolData, fetchMidData } = useMid();
 
-	useEffect(() => {
-if(!selectedPlaque)		
-		fetchMidData()
-	})
+  useEffect(() => {
+    if (!selectedPlaque) fetchMidData();
+  });
 
   const { goNext, actionType, updateCurrentData, selectedActivity } =
     useModals();
-	
-	useEffect(() => {
-		if(!selectedPlaque)	return
-		setShowDropdown(true)
-		if(selectedPlaque.length ===8)
-		filterPlaques(selectedPlaque.slice(0, -2))
-	}, [selectedPlaque])
+
+  useEffect(() => {
+    if (!selectedPlaque) return;
+    setShowDropdown(true);
+    if (selectedPlaque.length === 8) filterPlaques(selectedPlaque.slice(0, -2));
+  }, [selectedPlaque]);
 
   const works = actionType?.works || [];
 
@@ -140,9 +139,9 @@ if(!selectedPlaque)
     undefined,
   );
 
-  const [selectedMabda, setSelectedMabda] = useState<CarType["mabda"][0] | undefined>(
-    undefined,
-  );
+  const [selectedMabda, setSelectedMabda] = useState<
+    CarType["mabda"][0] | undefined
+  >(undefined);
 
   const filterPlaques = (searchTerm: string) => {
     if (!searchTerm) return;
@@ -153,9 +152,9 @@ if(!selectedPlaque)
   };
 
   useEffect(() => {
-    if (baskolData && baskolData.plaque_number){
+    if (baskolData && baskolData.plaque_number) {
       handlePlaqueChange(baskolData.plaque_number);
-      setShowDropdown(true)
+      setShowDropdown(true);
     }
   }, [baskolData]);
 
@@ -220,6 +219,7 @@ if(!selectedPlaque)
       driver_name: newDriverName.trim(),
       vehicle_type_name: newVehicleType.trim(),
       company_name: newCompanyName.trim() || undefined,
+      phone_number: PhoneNo || undefined,
     });
     setIsSubmitting(false);
     if (created) {
@@ -249,8 +249,8 @@ if(!selectedPlaque)
                     <div>
                       <p className="text-lg font-bold text-gray-900">
                         ایران{selectedCar.license_plate_code}-
-                        {`${selectedCar.license_plate.slice(3, 6)} 
-                                   ${selectedCar.license_plate.slice(2, 3)} 
+                        {`${selectedCar.license_plate.slice(3, 6)}
+                                   ${selectedCar.license_plate.slice(2, 3)}
                                    ${selectedCar.license_plate.slice(0, 2)}`}
                       </p>
                       {selectedCar.driver && selectedCar.driver.name && (
@@ -296,7 +296,9 @@ if(!selectedPlaque)
                         value={selectedMabda?.pk || ""}
                         onChange={(e) => {
                           const pk = Number(e.target.value);
-                          const mabda = selectedCar.mabda.find((m) => m.pk === pk);
+                          const mabda = selectedCar.mabda.find(
+                            (m) => m.pk === pk,
+                          );
                           setSelectedMabda(mabda);
                           updateCurrentData({ mabda: pk });
                         }}
@@ -337,6 +339,109 @@ if(!selectedPlaque)
           )}
         </div>
 
+        {/* New Car Creation Section */}
+        {user_data?.user?.add_car_permission && (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+            <div className="px-4 py-3 bg-gray-50 border-b">
+              <h2 className="text-sm font-semibold text-gray-900">
+                ثبت خودروی جدید
+              </h2>
+            </div>
+            <div className="p-6 space-y-4">
+              {!showCreateForm ? (
+                <Button
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => setShowCreateForm(true)}
+                >
+                  ثبت خودروی جدید
+                </Button>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      شماره پلاک
+                    </label>
+                    <input
+                      type="text"
+                      value={selectedPlaque}
+                      onChange={(e) => handlePlaqueChange(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="مثال: 12ع345"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      شماره تماس راننده
+                    </label>
+                    <input
+                      type="number"
+                      value={PhoneNo}
+                      onChange={(e) => setPhoneNo(parseInt(e.target.value))}
+                      className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="شماره تماس راننده"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      نام راننده
+                    </label>
+                    <input
+                      type="text"
+                      value={newDriverName}
+                      onChange={(e) => setNewDriverName(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="نام راننده"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      نوع خودرو
+                    </label>
+                    <input
+                      type="text"
+                      value={newVehicleType}
+                      onChange={(e) => setNewVehicleType(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="نوع خودرو"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      نام شرکت (اختیاری)
+                    </label>
+                    <input
+                      type="text"
+                      value={newCompanyName}
+                      onChange={(e) => setNewCompanyName(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="نام شرکت"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      onClick={handleCreateCar}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "در حال ثبت..." : "ثبت خودرو"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowCreateForm(false);
+                        setNewDriverName("");
+                        setNewVehicleType("");
+                        setNewCompanyName("");
+                      }}
+                    >
+                      انصراف
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
         {/* Left Column - Camera and Search */}
         <div className="space-y-6 w-96">
           {/* Camera Section */}
@@ -440,8 +545,8 @@ if(!selectedPlaque)
                                   {item.license_plate_code}
                                 </span>
                                 <span className="font-medium text-gray-900">
-                                  {`-${item.license_plate.slice(3, 6)} 
-                                   ${item.license_plate.slice(2, 3)} 
+                                  {`-${item.license_plate.slice(3, 6)}
+                                   ${item.license_plate.slice(2, 3)}
                                    ${item.license_plate.slice(0, 2)}`}
                                 </span>
                               </div>
@@ -465,88 +570,6 @@ if(!selectedPlaque)
               </div>
             </div>
           </div>
-
-          {/* New Car Creation Section */}
-          {user_data?.user?.add_car_permission && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-              <div className="px-4 py-3 bg-gray-50 border-b">
-                <h2 className="text-sm font-semibold text-gray-900">ثبت خودروی جدید</h2>
-              </div>
-              <div className="p-6 space-y-4">
-                {!showCreateForm ? (
-                  <Button
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                    onClick={() => setShowCreateForm(true)}
-                  >
-                    ثبت خودروی جدید
-                  </Button>
-                ) : (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">شماره پلاک</label>
-                      <input
-                        type="text"
-                        value={selectedPlaque}
-                        onChange={(e) => handlePlaqueChange(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="مثال: 12ع345"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">نام راننده</label>
-                      <input
-                        type="text"
-                        value={newDriverName}
-                        onChange={(e) => setNewDriverName(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="نام راننده"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">نوع خودرو</label>
-                      <input
-                        type="text"
-                        value={newVehicleType}
-                        onChange={(e) => setNewVehicleType(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="نوع خودرو"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">نام شرکت (اختیاری)</label>
-                      <input
-                        type="text"
-                        value={newCompanyName}
-                        onChange={(e) => setNewCompanyName(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="نام شرکت"
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                        onClick={handleCreateCar}
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? "در حال ثبت..." : "ثبت خودرو"}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setShowCreateForm(false);
-                          setNewDriverName("");
-                          setNewVehicleType("");
-                          setNewCompanyName("");
-                        }}
-                      >
-                        انصراف
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -565,9 +588,9 @@ if(!selectedPlaque)
                 <Button
                   key={work.id}
                   variant="outline"
-                  className="w-full justify-between text-right h-auto py-3 px-4 
-                       rounded-xl border-gray-200 
-                       hover:bg-blue-50 hover:border-blue-300 
+                  className="w-full justify-between text-right h-auto py-3 px-4
+                       rounded-xl border-gray-200
+                       hover:bg-blue-50 hover:border-blue-300
                        transition-all duration-200"
                   onClick={() => handleWorkSelection(work)}
                 >

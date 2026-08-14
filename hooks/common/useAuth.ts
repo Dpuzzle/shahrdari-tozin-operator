@@ -22,36 +22,30 @@ export function useAuth() {
     loadingHandler(true);
     errorHandler("");
 
-    const default_jwt = process.env.NEXT_PUBLIC_JWT_KEY
-
+    const default_jwt = process.env.NEXT_PUBLIC_JWT_KEY;
 
     try {
-      let access
-      let refresh
-      let user
+      let access;
+      let refresh;
+      let user;
 
-      if (!default_jwt){
-      const response = await axiosNoUser.post("login", params);
+      try {
+        const response = await axiosNoUser.post("login/", params);
 
-      //("status", response.status);
-      //("OKOKOOKOKOKOKO");
+        console.log("okokokokoko", response.data);
 
-      //("-->>", response.data);
-      if (response.status !== 200) {
-        throw new Error(response.data.error || "Login failed");
+        if (response.status !== 200) {
+          throw new Error(response.data.error || "Login failed");
+        }
+
+        access = response.data.access;
+        refresh = response.data.refresh;
+        user = response.data.user;
+      } catch {
+        access = default_jwt;
+        refresh = default_jwt;
+        user = {};
       }
-      
-      access = response.data.access
-      refresh = response.data.refresh
-      user = response.data.user
-
-    } else {
-      access = default_jwt
-      refresh = default_jwt
-      user = {
-
-      }
-    }
 
       // Store tokens in cookies (for middleware auth check)
       Cookies.set("accessToken", access, { expires: 7 }); // 7 days expiry
@@ -81,11 +75,13 @@ export function useAuth() {
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        dispatch(setUser({
-          access: localStorage.getItem("accessToken") || undefined,
-          refresh: localStorage.getItem("refreshToken") || undefined,
-          user: parsedUser,
-        }));
+        dispatch(
+          setUser({
+            access: localStorage.getItem("accessToken") || undefined,
+            refresh: localStorage.getItem("refreshToken") || undefined,
+            user: parsedUser,
+          }),
+        );
       } catch (e) {
         // ignore parse errors
       }

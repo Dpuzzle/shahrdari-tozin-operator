@@ -13,7 +13,6 @@ export default function WeightSection() {
   const [calculatedWeight, setCalculatedWeight] = useState<number | null>(null);
   const { baskolData, fetchMidData } = useMid();
   const { user_data } = useAuth();
-  //(step === ModalStep.WEIGHTING_EMPTY);
 
   const isEmptyWeightCalc = step === ModalStep.WEIGHTING_EMPTY;
 
@@ -146,21 +145,23 @@ export default function WeightSection() {
         {/* Action Buttons */}
         <div className="p-6 w-full flex flex-row justify-between">
           <div className="flex flex-row gap-3">
-            {isEmptyWeightCalc && selectedCar.last_empty_weight && user_data?.user?.previous_weight_permission !== false && (
-              <Button
-                type="button"
-                onClick={() => {
-                  setCalculatedWeight(selectedCar.last_empty_weight);
-                  handleSubmit(selectedCar.last_empty_weight);
-                  setIsCalculating(false);
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 
+            {isEmptyWeightCalc &&
+              selectedCar.last_empty_weight &&
+              user_data?.user?.previous_weight_permission !== false && (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setCalculatedWeight(selectedCar.last_empty_weight);
+                    handleSubmit(selectedCar.last_empty_weight);
+                    setIsCalculating(false);
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5
                     rounded-lg font-medium transition-colors flex-1 sm:flex-none"
-                disabled={isCalculating}
-              >
-                ادامه با وزن ثبت شده قبلی
-              </Button>
-            )}
+                  disabled={isCalculating}
+                >
+                  ادامه با وزن ثبت شده قبلی
+                </Button>
+              )}
             <Button
               type="submit"
               onClick={() => handleSubmit(baskolData?.baskol_value || 0)}
@@ -171,7 +172,7 @@ export default function WeightSection() {
                     isEmptyWeightCalc,
                   "bg-blue-600 hover:bg-blue-700 text-white":
                     !isEmptyWeightCalc,
-                }
+                },
               )}
               disabled={isCalculating || !calculatedWeight}
             >

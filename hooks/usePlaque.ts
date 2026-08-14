@@ -33,6 +33,7 @@ export default function usePlaque() {
     driver_name: string;
     vehicle_type_name: string;
     company_name?: string;
+    phone_number: number;
   }): Promise<CarType | null> => {
     // If online, try to send directly to Django
     if (isOnline) {
@@ -73,7 +74,7 @@ export default function usePlaque() {
         payload: data,
         createdAt: new Date().toISOString(),
         status: "pending",
-      })
+      }),
     );
 
     if (!isOnline) {
@@ -90,17 +91,20 @@ export default function usePlaque() {
     if (pending.length === 0) return false;
 
     try {
-      const authorization = typeof window !== "undefined"
-        ? document.cookie
-            .split("; ")
-            .find((c) => c.startsWith("accessToken="))
-            ?.split("=")[1]
-        : null;
+      const authorization =
+        typeof window !== "undefined"
+          ? document.cookie
+              .split("; ")
+              .find((c) => c.startsWith("accessToken="))
+              ?.split("=")[1]
+          : null;
 
       const response = await apiFetcher.post("/api/car-requests", pending, {
         headers: {
           "Content-Type": "application/json",
-          ...(authorization ? { Authorization: `Bearer ${authorization}` } : {}),
+          ...(authorization
+            ? { Authorization: `Bearer ${authorization}` }
+            : {}),
         },
       });
 
@@ -122,7 +126,7 @@ export default function usePlaque() {
             id: item.id,
             status: "failed",
             lastError: `Server responded with status ${response.status}`,
-          })
+          }),
         );
       }
       return false;
@@ -133,7 +137,7 @@ export default function usePlaque() {
             id: item.id,
             status: "failed",
             lastError: error?.message ?? "Network error",
-          })
+          }),
         );
       }
       return false;
