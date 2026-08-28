@@ -13,7 +13,7 @@ export const useMid = () => {
   >();
 
   const fetchMidData = async () => {
-    const response = await midFetcher.get("/mid");
+    const response = await midFetcher.get("/");
 
     setBaskolData(response.data);
   };

@@ -8,6 +8,7 @@ import usePlaque from "@/hooks/usePlaque";
 import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
 import { useAuth } from "@/hooks/common/useAuth";
 import OperationSection from "@/app/Dashboard/(sections)/operation";
+import MainModal from "./(modals)/main";
 
 export default function () {
   const { logout } = useAuth();
@@ -94,6 +95,7 @@ export default function () {
           <p className="mt-1">فقط برای استفاده رسمی</p>
         </div>
       </div>
+      <MainModal />
     </main>
   );
 }
