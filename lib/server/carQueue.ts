@@ -176,6 +176,7 @@ export async function flushQueue(
         await sleep(delay);
       }
     } catch (err: any) {
+      globalThis.console.error("Backend connection error in flushQueue:", err);
       item.attempts += 1;
       item.updatedAt = new Date().toISOString();
 

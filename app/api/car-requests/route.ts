@@ -17,9 +17,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(res.data, { status: res.status });
   } catch (error: any) {
+    globalThis.console.error("Backend connection error:", error);
     return NextResponse.json(
-      { error: error?.message ?? "unknown error" },
-      { status: 500 }
+      { error: "Client is offline", offline: true },
+      { status: 502 }
     );
   }
 }
@@ -40,9 +41,10 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (error: any) {
+    globalThis.console.error("Backend connection error:", error);
     return NextResponse.json(
-      { error: error?.message ?? "unknown error" },
-      { status: 500 }
+      { error: "Client is offline", offline: true },
+      { status: 502 }
     );
   }
 }

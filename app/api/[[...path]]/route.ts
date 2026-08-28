@@ -30,9 +30,10 @@ async function proxy(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(res.data, { status: res.status });
   } catch (error: any) {
+    globalThis.console.error("Backend connection error:", error);
     return NextResponse.json(
-      { error: error?.message ?? "unknown error" },
-      { status: 500 }
+      { error: "Client is offline", offline: true },
+      { status: 502 }
     );
   }
 }
