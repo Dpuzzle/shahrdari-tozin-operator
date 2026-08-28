@@ -5,6 +5,7 @@ import { fetcher } from "@/lib/axios";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNetworkStatus } from "./common/useNetworkStatus";
+import { setSystemOnline } from "@/store/slices/system";
 
 export function useAction() {
   const { openConfirmModal } = useConfirm();
@@ -13,7 +14,6 @@ export function useAction() {
 
   const dispatch = useAppDispatch();
   const get_Action_list_list_712daa = async (confirm: boolean = false) => {
-    // check for confirm when this function is opened
     if (confirm) {
       const isConfirmed = await openConfirmModal();
       if (!isConfirmed) {
@@ -22,13 +22,10 @@ export function useAction() {
     }
 
     try {
-      // get data and read from server
       const response = await fetcher.get("Action/712daa/");
 
       if (response.data.Action) {
         const serverData = response.data.Action;
-        // set response of server on state
-
         dispatch(Action_set(serverData));
         return true;
       } else {
@@ -37,16 +34,17 @@ export function useAction() {
       }
     } catch (error) {
       console.error("Error fetching action data:", error);
+      dispatch(setSystemOnline(false));
       toast.error("خطا در دریافت اطلاعات");
       return false;
     }
   };
 
   useEffect(() => {
-    // Fetch data when hook is initialized
-    // if(isOnline)
-    // get_Action_list_list_712daa();
-  }, []);
+    if (isOnline) {
+      get_Action_list_list_712daa();
+    }
+  }, [isOnline]);
 
   return { Action_list, get_Action_list_list_712daa };
 }

@@ -9,7 +9,7 @@ import { ModalStep } from "@/store/core/modals";
 import { useActivity } from "@/hooks/useActivity";
 
 export default function OperationSection() {
-  const { Action_list, get_Action_list_list_712daa } = useAction();
+  const { Action_list } = useAction();
   const { openModal } = useModals();
   const { Activity_data } = useActivity("silent");
 

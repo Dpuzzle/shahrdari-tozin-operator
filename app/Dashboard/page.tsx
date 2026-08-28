@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import usePlaque from "@/hooks/usePlaque";
 import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
 import { useAuth } from "@/hooks/common/useAuth";
+import OperationSection from "@/app/Dashboard/(sections)/operation";
 
 export default function () {
   const { logout } = useAuth();
@@ -65,7 +66,7 @@ export default function () {
 
       <div className="max-w-7xl mx-auto px-4 py-6 h-full flex flex-col">
         <div className="flex flex-row w-full gap-6 h-full">
-          <div className="bg-white border border-gray-200 rounded w-full">
+          <div className="bg-white border border-gray-200 rounded flex-1">
             <div className="bg-gray-100 px-6 py-3 border-b border-gray-200">
               <h2 className="text-lg font-medium text-gray-800">
                 گزارش فعالیت‌های کاربر
@@ -85,6 +86,7 @@ export default function () {
               )}
             </div>
           </div>
+          <OperationSection />
         </div>
 
         <div className="mt-8 text-center text-sm text-gray-500">
