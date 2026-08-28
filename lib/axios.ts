@@ -4,20 +4,21 @@ import Cookies from "js-cookie";
 import type { AxiosRequestConfig } from "axios";
 
 export const fetcher = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  baseURL: "/api/",
   validateStatus(status) {
     return status < 500;
   },
 });
 
 export const axiosNoUser = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  baseURL: "/api/",
   validateStatus(status) {
     return status < 500;
   },
 });
+
 export const midFetcher = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_MID_URL,
+  baseURL: "/api/",
   validateStatus(status) {
     return status < 500;
   },

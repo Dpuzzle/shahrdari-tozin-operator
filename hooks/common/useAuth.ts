@@ -91,7 +91,7 @@ export function useAuth() {
   const logout = async () => {
     dispatch(logoutUser());
     router.push("/");
-    const response = await fetcher.get("/auth/logout");
+    const response = await fetcher.get("auth/logout");
   };
 
   return {
