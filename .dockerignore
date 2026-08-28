@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.env*
+.env.local
+.queue
+*.log
+coverage
+.DS_Store
+docker-compose*.yml
+Dockerfile
