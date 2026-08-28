@@ -1,8 +1,6 @@
-import fetcher from "@/lib/axios";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Car_set, Car_add, CarType } from "@/store/slices/Car";
-import { temp_selectCar } from "@/store/slices/temp";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
 import {

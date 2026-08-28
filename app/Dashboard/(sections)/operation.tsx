@@ -14,6 +14,7 @@ export default function OperationSection() {
   const { Activity_data } = useActivity("silent");
 
   const openPlaqueFromButton = (actionType: ActionType) => {
+    console.log(actionType);
     openModal({
       actionType,
       step: ModalStep.PLAQUE,
@@ -27,11 +28,6 @@ export default function OperationSection() {
     <div className="bg-white border border-gray-200 rounded w-96 shadow-sm">
       <div className="bg-gray-100 px-6 py-3 border-b border-gray-200">
         <h2 className="text-lg font-medium text-gray-800">اقدامات مجاز</h2>
-      </div>
-
-      {/* Car Status Panel */}
-      <div className="border-b border-gray-200">
-        <StatusPanel />
       </div>
 
       <div className="p-4">
@@ -100,4 +96,3 @@ export default function OperationSection() {
     </div>
   );
 }
-
