@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
 import { setSystemOnline } from "@/store/slices/system";
+import axios from "axios";
 
 interface CsvActivityRow {
   tozin_id?: string;
@@ -140,28 +141,6 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
     }
   };
 
-  const syncActivityFromServer = async () => {
-    try {
-      const response = await fetcher.get("activity/");
-
-      if (response.status >= 200 && response.status < 300) {
-        const raw = response.data;
-        let list: any[] = [];
-        if (Array.isArray(raw)) {
-          list = raw;
-        } else if (raw && typeof raw === "object") {
-          list = [raw];
-        }
-
-        dispatch(Activity_set(list as ActivityType[]));
-      }
-    } catch (error) {
-      console.error("Error syncing activity from server:", error);
-      dispatch(setSystemOnline(false));
-      toast.error("خطا در دریافت اطلاعات از سرور");
-    }
-  };
-
   useEffect(() => {
     // Fetch data when hook is initialized
     if (mode !== "silent") {
@@ -175,6 +154,5 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
     get_Activity_list_list_d2bfc9: get_activity_list,
     setActivity,
     sendDataServer,
-    syncActivityFromServer,
   };
 }

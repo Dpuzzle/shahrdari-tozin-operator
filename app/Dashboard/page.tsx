@@ -18,12 +18,10 @@ export default function () {
     Activity_data,
     get_Activity_list_list_d2bfc9,
     sendDataServer: sendActivityData,
-    syncActivityFromServer,
   } = useActivity("normal");
 
   useEffect(() => {
     get_Activity_list_list_d2bfc9();
-    syncActivityFromServer();
     syncCarRequestsFromServer();
   }, []);
 
