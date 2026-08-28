@@ -12,15 +12,17 @@ export async function GET(req: NextRequest) {
 
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}activity/`,
-      { headers, validateStatus: () => true }
+      { headers, validateStatus: () => true },
     );
+
+    console.log(res.data);
 
     return NextResponse.json(res.data, { status: res.status });
   } catch (error: any) {
     globalThis.console.error("Backend connection error:", error);
     return NextResponse.json(
       { error: "Client is offline", offline: true },
-      { status: 502 }
+      { status: 502 },
     );
   }
 }
@@ -38,13 +40,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { detail: "Activity cached", ...result },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: any) {
     globalThis.console.error("Backend connection error:", error);
     return NextResponse.json(
       { error: "Client is offline", offline: true },
-      { status: 502 }
+      { status: 502 },
     );
   }
 }

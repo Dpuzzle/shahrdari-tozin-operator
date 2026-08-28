@@ -74,7 +74,6 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
   const { openConfirmModal } = useConfirm();
   const Activity_data = useAppSelector((store) => store.Activity).data;
   const dispatch = useAppDispatch();
-  const { isOnline } = useNetworkStatus();
 
   const get_activity_list = async (confirm: boolean = false) => {
     // check for confirm when this function is opened
@@ -94,9 +93,7 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
         const csvData: CsvActivityRow[] = response.data.data ?? [];
 
         // set CSV rows on state (no server fetch needed)
-        dispatch(
-          Activity_set(csvData.map((row) => mapCsvRowToActivity(row))),
-        );
+        dispatch(Activity_set(csvData.map((row) => mapCsvRowToActivity(row))));
         return true;
       }
 

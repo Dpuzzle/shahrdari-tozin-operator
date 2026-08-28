@@ -4,21 +4,21 @@ import Cookies from "js-cookie";
 import type { AxiosRequestConfig } from "axios";
 
 export const fetcher = axios.create({
-  baseURL: "/api/",
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
   validateStatus(status) {
     return status < 500;
   },
 });
 
 export const axiosNoUser = axios.create({
-  baseURL: "/api/",
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
   validateStatus(status) {
     return status < 500;
   },
 });
 
 export const midFetcher = axios.create({
-  baseURL: "/api/",
+  baseURL: process.env.NEXT_PUBLIC_MID_URL,
   validateStatus(status) {
     return status < 500;
   },
@@ -38,7 +38,7 @@ apiFetcher.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 fetcher.interceptors.request.use(
@@ -49,7 +49,7 @@ fetcher.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 fetcher.interceptors.response.use(
@@ -58,7 +58,7 @@ fetcher.interceptors.response.use(
       toast.error("server error");
     } else if (response.status >= 400) {
       toast.error(
-        response.data.detail || response.data.error || "unknown error"
+        response.data.detail || response.data.error || "unknown error",
       );
     } else if (response.data.detail) {
     }
@@ -73,7 +73,7 @@ fetcher.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 /**
@@ -91,7 +91,7 @@ export function shouldQueueRequest(url: string): boolean {
 export function createQueuableRequest(
   url: string,
   method: "POST" | "PUT" | "DELETE",
-  data?: any
+  data?: any,
 ): {
   url: string;
   method: "POST" | "PUT" | "DELETE";
