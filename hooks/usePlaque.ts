@@ -140,28 +140,6 @@ export default function usePlaque() {
     }
   };
 
-  const syncCarRequestsFromServer = async () => {
-    try {
-      const response = await fetcher.get("car/create/");
-
-      if (response.status >= 200 && response.status < 300) {
-        const raw = response.data;
-        let list: any[] = [];
-        if (Array.isArray(raw)) {
-          list = raw;
-        } else if (raw && typeof raw === "object") {
-          list = [raw];
-        }
-
-        dispatch(Car_set(list as CarType[]));
-      }
-    } catch (error) {
-      console.error("Error syncing car requests from server:", error);
-      dispatch(setSystemOnline(false));
-      toast.error("خطا در دریافت اطلاعات از سرور");
-    }
-  };
-
   return {
     cars,
     selectedCar,
@@ -169,6 +147,5 @@ export default function usePlaque() {
     fetchCarData,
     flushPendingCars,
     pendingRequests,
-    syncCarRequestsFromServer,
   };
 }

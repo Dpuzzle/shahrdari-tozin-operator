@@ -13,7 +13,7 @@ import MainModal from "./(modals)/main";
 export default function () {
   const { logout } = useAuth();
   const { isOnline } = useNetworkStatus();
-  const { flushPendingCars, syncCarRequestsFromServer } = usePlaque();
+  const { flushPendingCars } = usePlaque();
   const {
     Activity_data,
     get_Activity_list_list_d2bfc9,
@@ -22,7 +22,6 @@ export default function () {
 
   useEffect(() => {
     get_Activity_list_list_d2bfc9();
-    syncCarRequestsFromServer();
   }, []);
 
   useEffect(() => {
