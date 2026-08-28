@@ -114,8 +114,11 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
   };
 
   const sendDataServer = async () => {
-    const data = Activity_data.filter((a) => !a.server_accepted).map((a) => ({
-      ...a,
+    const unsentActivities = Activity_data.filter((a) => !a.server_accepted);
+
+    if (unsentActivities.length === 0) return;
+
+    const data = unsentActivities.map((a) => ({
       id: a.tozin_id,
       address: a.address,
       vehicle_id: a.Car.pk,
@@ -125,15 +128,21 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
       work_type_id: a.work_type_id,
     }));
 
-    if (!data || data.length === 0) return;
-    const last_tozin_id = Math.max(...data.map((a) => a.tozin_id || 0));
+    const last_tozin_id = Math.max(
+      ...unsentActivities.map((a) => a.tozin_id || 0),
+    );
     dispatch(Activity_set_base(last_tozin_id));
 
     try {
       await apiFetcher.post("/api/activity", data);
 
+      const unsentIds = new Set(unsentActivities.map((a) => a.tozin_id));
       dispatch(
-        Activity_set(data.map((a: any) => ({ ...a, server_accepted: true }))),
+        Activity_set(
+          Activity_data.map((a) =>
+            unsentIds.has(a.tozin_id) ? { ...a, server_accepted: true } : a,
+          ),
+        ),
       );
     } catch (error) {
       console.error("Error sending activity data:", error);
