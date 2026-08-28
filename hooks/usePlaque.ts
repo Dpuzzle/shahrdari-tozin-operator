@@ -10,7 +10,8 @@ import {
   requestQueue_remove,
   requestQueue_updateStatus,
 } from "@/store/slices/requestQueue";
-import { apiFetcher } from "@/lib/axios";
+import { apiFetcher, fetcher } from "@/lib/axios";
+import { setSystemOnline } from "@/store/slices/system";
 
 export default function usePlaque() {
   const cars = useAppSelector((state) => state.Car.data);
@@ -109,17 +110,14 @@ export default function usePlaque() {
       });
 
       if (response.status >= 200 && response.status < 300) {
-        // Mark all as sent in Redux
         for (const item of pending) {
           dispatch(requestQueue_remove(item.id));
         }
         toast.success(`${pending.length} خودرو با موفقیت ارسال شد`);
-        // Refresh car list from server to get real IDs
         await fetchCarData();
         return true;
       }
 
-      // Update failed statuses
       for (const item of pending) {
         dispatch(
           requestQueue_updateStatus({
@@ -144,6 +142,28 @@ export default function usePlaque() {
     }
   };
 
+  const syncCarRequestsFromServer = async () => {
+    try {
+      const response = await fetcher.get("car/create/");
+
+      if (response.status >= 200 && response.status < 300) {
+        const raw = response.data;
+        let list: any[] = [];
+        if (Array.isArray(raw)) {
+          list = raw;
+        } else if (raw && typeof raw === "object") {
+          list = [raw];
+        }
+
+        dispatch(Car_set(list as CarType[]));
+      }
+    } catch (error) {
+      console.error("Error syncing car requests from server:", error);
+      dispatch(setSystemOnline(false));
+      toast.error("خطا در دریافت اطلاعات از سرور");
+    }
+  };
+
   return {
     cars,
     selectedCar,
@@ -151,5 +171,6 @@ export default function usePlaque() {
     fetchCarData,
     flushPendingCars,
     pendingRequests,
+    syncCarRequestsFromServer,
   };
 }

@@ -11,15 +11,18 @@ import { useAuth } from "@/hooks/common/useAuth";
 export default function () {
   const { logout } = useAuth();
   const { isOnline } = useNetworkStatus();
-  const { flushPendingCars } = usePlaque();
+  const { flushPendingCars, syncCarRequestsFromServer } = usePlaque();
   const {
     Activity_data,
     get_Activity_list_list_d2bfc9,
     sendDataServer: sendActivityData,
+    syncActivityFromServer,
   } = useActivity("normal");
 
   useEffect(() => {
     get_Activity_list_list_d2bfc9();
+    syncActivityFromServer();
+    syncCarRequestsFromServer();
   }, []);
 
   useEffect(() => {
