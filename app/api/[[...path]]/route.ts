@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
+import https from "https";
 
 export const dynamic = "force-dynamic";
 
@@ -20,12 +21,16 @@ async function proxy(req: NextRequest): Promise<NextResponse> {
       data = await req.text();
     }
 
+    const isHttps = backendUrl.startsWith("https://");
     const res = await axios.request({
       url: backendUrl,
       method: req.method,
       headers,
       data,
       validateStatus: () => true,
+      ...(isHttps && {
+        httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+      }),
     });
 
     return NextResponse.json(res.data, { status: res.status });
