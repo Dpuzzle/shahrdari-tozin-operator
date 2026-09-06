@@ -8,6 +8,8 @@ export async function POST(req: NextRequest) {
     const payload = await req.json();
     const authorization = req.headers.get("authorization");
 
+    console.log("[API] get the request for save and send");
+
     // 1. cache each request on disk as a JSON file
     await enqueue(payload);
 

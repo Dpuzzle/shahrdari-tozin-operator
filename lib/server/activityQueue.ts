@@ -81,7 +81,7 @@ async function appendToDailyCsv(payload: unknown): Promise<void> {
 }
 
 export interface QueueItem {
-  id: string;
+  tozin_id: string;
   payload: unknown;
   status: "pending" | "sent" | "failed";
   attempts: number;
@@ -114,20 +114,20 @@ function generateId(): string {
 }
 
 export async function enqueue(payload: unknown) {
-  const items = await ensureQueue();
+  var items = await ensureQueue();
   const exiests_tozin_id = items.map((i) => (i.payload as any).tozin_id);
 
   (payload as any).forEach(async (p: any) => {
     let i = {
       id: generateId(),
-      payload: p,
+      payload: { ...p, tozin_id: p.id },
       status: "pending" as any,
       attempts: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    if (!exiests_tozin_id.includes(p.tozin_id)) {
+    if (!exiests_tozin_id.includes(p.id)) {
       items.push(i);
       await appendToDailyCsv(p);
     }
@@ -186,7 +186,7 @@ export async function flushQueue(
         }
       } else if (item.attempts >= MAX_RETRIES) {
         item.status = "failed";
-        item.lastError = `status ${res.status}: ${JSON.stringify(res.data)}`;
+        item.lastError = `status ${res.status}`;
         failed += 1;
       } else {
         item.status = "pending";
@@ -200,6 +200,7 @@ export async function flushQueue(
 
       if (item.attempts >= MAX_RETRIES) {
         item.status = "failed";
+        console.error(err);
         item.lastError = err?.message ?? String(err);
         failed += 1;
       } else {
