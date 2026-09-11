@@ -10,7 +10,13 @@ export async function POST(req: NextRequest) {
 
     console.log("[API] get the request for save and send");
 
-    const serialized_items = payload.map((p) => ({ ...p, tozin_id: p.id }));
+    const serialized_items = payload.map((p) => ({
+      ...p,
+      tozin_id: p.id,
+      vehicle_plate: p.Car.license_plate,
+      vehicle_id: p.Car.pk,
+      weighing_type_name: p.work_type.name,
+    }));
 
     // 1. cache each request on disk as a JSON file
     await enqueue(serialized_items);

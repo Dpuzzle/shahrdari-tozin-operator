@@ -116,7 +116,6 @@ function generateId(): string {
 export async function enqueue(payload: unknown) {
   var items = await ensureQueue();
   const exiests_tozin_id = items.map((i) => (i.payload as any).tozin_id);
-
   (payload as any).forEach(async (p: any) => {
     let i = {
       id: generateId(),
@@ -127,7 +126,7 @@ export async function enqueue(payload: unknown) {
       updatedAt: new Date().toISOString(),
     };
 
-    if (!exiests_tozin_id.includes(p.id)) {
+    if (!exiests_tozin_id.includes(p.tozin_id)) {
       items.push(i);
       await appendToDailyCsv(p);
     }

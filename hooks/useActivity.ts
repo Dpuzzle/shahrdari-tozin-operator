@@ -122,6 +122,7 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
       Full: a.Full,
       Empty: a.Empty,
       work_type_id: a.work_type_id,
+      ...a,
     }));
 
     const last_tozin_id = Math.max(

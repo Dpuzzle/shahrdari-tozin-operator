@@ -80,67 +80,72 @@ export default function ActivityTable({ data }: ActivityTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody className="bg-white divide-y divide-gray-200">
-          {data.map((item) => (
-            <TableRow className="hover:bg-gray-50 transition-colors">
-              {/* ID Column */}
+          {data
+            .filter(
+              (item, index) =>
+                data.findIndex((i) => i.tozin_id === item.tozin_id) === index,
+            )
+            .map((item) => (
+              <TableRow className="hover:bg-gray-50 transition-colors">
+                {/* ID Column */}
 
-              <TableCell className="px-4 py-3 text-sm font-mono text-gray-500">
-                {item.tozin_id}
-              </TableCell>
+                <TableCell className="px-4 py-3 text-sm font-mono text-gray-500">
+                  {item.tozin_id}
+                </TableCell>
 
-              {/* Status Column */}
-              <TableCell className="px-4 py-3 text-sm">
-                <span
-                  className={cn(
-                    "inline-flex px-2 py-1 text-xs font-semibold rounded-full ",
-                    getOperationState(item).class,
-                  )}
-                >
-                  {getOperationState(item).label}
-                </span>
-              </TableCell>
+                {/* Status Column */}
+                <TableCell className="px-4 py-3 text-sm">
+                  <span
+                    className={cn(
+                      "inline-flex px-2 py-1 text-xs font-semibold rounded-full ",
+                      getOperationState(item).class,
+                    )}
+                  >
+                    {getOperationState(item).label}
+                  </span>
+                </TableCell>
 
-              {/* Vehicle Column */}
-              <TableCell className="px-4 py-3 text-sm font-medium text-gray-900">
-                {item?.Car?.license_plate || "-"}
-              </TableCell>
+                {/* Vehicle Column */}
+                <TableCell className="px-4 py-3 text-sm font-medium text-gray-900">
+                  {item?.Car?.license_plate || "-"}
+                </TableCell>
 
-              {/* Action Type Column */}
-              <TableCell className="px-4 py-3 text-sm font-medium text-gray-900">
-                {item?.Action.name || "-"}
-              </TableCell>
+                {/* Action Type Column */}
+                <TableCell className="px-4 py-3 text-sm font-medium text-gray-900">
+                  {item?.Action.name || "-"}
+                </TableCell>
 
-              {/* Empty Weight Column */}
-              <TableCell className="px-4 py-3 text-sm text-right text-gray-700">
-                {item?.Empty || "-"}
-              </TableCell>
+                {/* Empty Weight Column */}
+                <TableCell className="px-4 py-3 text-sm text-right text-gray-700">
+                  {item?.Empty || "-"}
+                </TableCell>
 
-              {/* Full Weight Column */}
-              <TableCell className="px-4 py-3 text-sm text-right text-gray-700">
-                {item.Full || "-"}
-              </TableCell>
-              <TableCell className="px-4 py-3 text-sm text-right text-gray-700">
-                {item.Full && item.Empty ? item.Full - item.Empty : "-"}
-              </TableCell>
+                {/* Full Weight Column */}
+                <TableCell className="px-4 py-3 text-sm text-right text-gray-700">
+                  {item.Full || "-"}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-sm text-right text-gray-700">
+                  {item.Full && item.Empty ? item.Full - item.Empty : "-"}
+                </TableCell>
 
-              {/* Time Column */}
-              <TableCell className="px-4 py-3 text-sm text-gray-500">
-                اخیراً
-              </TableCell>
+                {/* Time Column */}
+                <TableCell className="px-4 py-3 text-sm text-gray-500">
+                  اخیراً
+                </TableCell>
 
-              {/* Actions Column */}
-              <TableCell className="px-4 py-3 text-sm text-right">
-                <button
-                  onClick={() => openFromActivity(item)}
-                  className="px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-                >
-                  {getOperationState(item).status === "completed"
-                    ? "نمایش جزئیات"
-                    : "ادامه عملیات"}
-                </button>
-              </TableCell>
-            </TableRow>
-          ))}
+                {/* Actions Column */}
+                <TableCell className="px-4 py-3 text-sm text-right">
+                  <button
+                    onClick={() => openFromActivity(item)}
+                    className="px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                  >
+                    {getOperationState(item).status === "completed"
+                      ? "نمایش جزئیات"
+                      : "ادامه عملیات"}
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </div>
