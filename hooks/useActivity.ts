@@ -10,12 +10,8 @@ import { type CarType } from "@/store/slices/Car";
 import { type ActionType } from "@/store/slices/Action";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { apiFetcher } from "@/lib/axios";
-import { fetcher } from "@/lib/axios";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { useNetworkStatus } from "@/hooks/common/useNetworkStatus";
-import { setSystemOnline } from "@/store/slices/system";
-import axios from "axios";
 
 interface CsvActivityRow {
   tozin_id?: string;
@@ -113,7 +109,7 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
     dispatch(Activity_update({ data, pk: data.tozin_id }));
   };
 
-  const sendDataServer = async () => {
+  const sendActivityData = async () => {
     const unsentActivities = Activity_data.filter((a) => !a.server_accepted);
 
     if (unsentActivities.length === 0) return;
@@ -160,8 +156,7 @@ export function useActivity(mode: undefined | "silent" | "normal" = "normal") {
   return {
     Activity_data,
     get_activity_list,
-    get_Activity_list_list_d2bfc9: get_activity_list,
     setActivity,
-    sendDataServer,
+    sendActivityData,
   };
 }

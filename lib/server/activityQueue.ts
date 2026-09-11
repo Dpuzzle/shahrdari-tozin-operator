@@ -120,7 +120,7 @@ export async function enqueue(payload: unknown) {
   (payload as any).forEach(async (p: any) => {
     let i = {
       id: generateId(),
-      payload: { ...p, tozin_id: p.id },
+      payload: p,
       status: "pending" as any,
       attempts: 0,
       createdAt: new Date().toISOString(),

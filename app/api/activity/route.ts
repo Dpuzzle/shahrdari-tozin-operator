@@ -10,8 +10,10 @@ export async function POST(req: NextRequest) {
 
     console.log("[API] get the request for save and send");
 
+    const serialized_items = payload.map((p) => ({ ...p, tozin_id: p.id }));
+
     // 1. cache each request on disk as a JSON file
-    await enqueue(payload);
+    await enqueue(serialized_items);
 
     // 2. after caching, send all not-yet-sent (pending) data to the Django server
     const result = await flushQueue(authorization);

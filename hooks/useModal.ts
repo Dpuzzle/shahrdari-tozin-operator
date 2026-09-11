@@ -25,7 +25,8 @@ export const useModals = () => {
   const { baskolData } = useMid();
 
   const dispatch = useAppDispatch();
-  const { setActivity, Activity_data, sendDataServer } = useActivity("silent");
+  const { setActivity, Activity_data, sendActivityData } =
+    useActivity("silent");
   const { Action_list } = useAction();
 
   const now = new Date();
@@ -37,7 +38,7 @@ export const useModals = () => {
   const seconds = String(now.getSeconds()).padStart(2, "0");
 
   useEffect(() => {
-    sendDataServer();
+    sendActivityData();
   }, [open, modalData]);
 
   const datetimeString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;

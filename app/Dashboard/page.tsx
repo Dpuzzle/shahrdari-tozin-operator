@@ -14,14 +14,11 @@ export default function () {
   const { logout } = useAuth();
   const { isOnline } = useNetworkStatus();
   const { flushPendingCars } = usePlaque();
-  const {
-    Activity_data,
-    get_Activity_list_list_d2bfc9,
-    sendDataServer: sendActivityData,
-  } = useActivity("normal");
+  const { Activity_data, get_activity_list, sendActivityData } =
+    useActivity("normal");
 
   useEffect(() => {
-    get_Activity_list_list_d2bfc9();
+    get_activity_list();
   }, []);
 
   useEffect(() => {
